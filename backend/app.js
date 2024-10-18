@@ -3,6 +3,8 @@ const app = express();
 require("dotenv").config();
 const connectDB = require("./db/connect");
 const course = require("./routes/course");
+const student = require("./routes/student");
+const teacher = require("./routes/teacher");
 const port = 3000;
 
 //middleware
@@ -13,6 +15,8 @@ app.get("/home", (req, res) => {
 })
 
 app.use("/api/v1/course", course);
+app.use("/api/v1/student", student);
+app.use("/api/v1/teacher", teacher);
 
 const start = async () => {
     try {

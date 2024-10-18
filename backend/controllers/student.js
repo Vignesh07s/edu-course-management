@@ -1,36 +1,87 @@
-const Task = require("../models/student");
+const Student = require('../models/student');
 
-const getCourses = async (req, res) => {
+const updateStudentCourses = async (req, res) => {
+    const { coursesEnrolled } = req.body; // Expecting an array of { courseId, teacherId }
+
     try {
-        const student = await Task.find({});
-        res.status(200).send({ task });
+        const student = await Student.findById(req.params.id);
+        if (!student) return res.status(404).json({ message: 'Student not found' });
+
+        // Update the student's coursesEnrolled
+        student.coursesEnrolled = coursesEnrolled;
+        await student.save();
+
+        res.status(200).json({ message: 'Courses and teachers updated successfully', student });
     } catch (error) {
-        res.status(400).send(error);
+        res.status(400).json({ message: error.message });
     }
-}
+};
 
-const setCourses = async (req, res) => {
+
+
+// Create a new student
+const createStudent = async (req, res) => {
     try {
-        const tasks = await Task.create();
-        res.status(200).send(tasks);
+        const newStudent = new Student(req.body);
+        await newStudent.save();
+        res.status(201).json({ newStudent });
     } catch (error) {
-        res.status(500)
+        res.status(400).json({ message: error.message });
     }
-}
+};
 
-const getTask = async (req, res) => {
-    const _id = req.params.id;
+// Get all students
+const getAllStudents = async (req, res) => {
     try {
-        const task = await Task.findById(_id);
-        if (!task) {
-            return res.status(404).send();
-        } else {
-            res.status(200).send(task);
-        }
+        // const students = await Student.find().populate('coursesEnrolled');
+        const students = await Student.find({});
+        res.status(200).json({ students, studentsCount: students.length });
+    } catch (error) {
+        res.status(500).json({ message: error.message });
     }
-    catch (error) {
-        res.status(500).send(error);
-    }
-}
+};
 
-module.exports = {getCourses, setCourses, updateCourses, removeCourses}
+// Get a specific student by ID
+const getStudentById = async (req, res) => {
+    try {
+        // const student = await Student.findById(req.params.id).populate('coursesEnrolled');
+        const student = await Student.findById(req.params.id);
+        if (!student) return res.status(404).json({ message: 'Student not found' });
+        res.status(200).json(student);
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+};
+
+
+const updateStudent = async (req, res) => {
+    const { coursesEnrolled, ...studentData } = req.body; // Exclude coursesEnrolled from update
+
+    try {
+        const updatedStudent = await Student.findByIdAndUpdate(req.params.id, studentData, { new: true, runValidators: true });
+        if (!updatedStudent) return res.status(404).json({ message: 'Student not found' });
+        res.status(200).json({ updatedStudent });
+    } catch (error) {
+        res.status(400).json({ message: error.message });
+    }
+};
+
+// Delete a specific student by ID
+const deleteStudent = async (req, res) => {
+    try {
+        const student = await Student.findByIdAndDelete(req.params.id);
+        if (!student) return res.status(404).json({ message: 'Student not found' });
+        res.status(200).json({ message: 'Student deleted' });
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+};
+
+module.exports = {
+    createStudent,
+    getAllStudents,
+    getStudentById,
+    updateStudent,
+    deleteStudent,
+    updateStudentCourses
+};

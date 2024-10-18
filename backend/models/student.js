@@ -54,14 +54,26 @@ const studentSchema = new mongoose.Schema({
         state: { type: String, required: true, trim: true },
         postalCode: { type: String, required: true, trim: true }
     },
-    coursesEnrolled: [{
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'Course'
-    }]
-    // dateOfAdmission: {
-    //     type: Date,
-    //     default: Date.now
-    // }
+    coursesEnrolled: {
+        type: [{
+            courseId: {
+                type: mongoose.Schema.Types.ObjectId,
+                ref: 'Course',
+                required: true
+            },
+            teacherId: {
+                type: mongoose.Schema.Types.ObjectId,
+                ref: 'Teacher',
+                required: true
+            }
+        }],
+        default: []
+    },
+    password: {
+        type: String,
+        required: true,
+        default: function() { return this.regdNumber; } // Set default password to regdNumber
+    },
 });
 
 module.exports = mongoose.model('Student', studentSchema);
