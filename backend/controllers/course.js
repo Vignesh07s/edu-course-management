@@ -12,7 +12,7 @@ const createCourse = async (req, res) => {
 const getCourses = async (req, res) => {
     try {
         const courses = await Course.find({});
-        res.status(200).send({ courses });
+        res.status(200).send( courses );
     } catch (error) {
         res.status(500).send({ error: error.message });
     }
