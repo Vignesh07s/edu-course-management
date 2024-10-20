@@ -1,5 +1,6 @@
 import NoteContext from './NoteContext';
 import { useState } from 'react';
+const url = "https://edu-course-management.onrender.com"
 
 const NoteState = (props) => {
     const [error, setError] = useState(false);
@@ -10,7 +11,7 @@ const NoteState = (props) => {
 
     const login = async (email, password, role) => {
         try {
-            const response = await fetch('http://localhost:3000/api/v1/login', {
+            const response = await fetch(`${url}/api/v1/login`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -37,7 +38,7 @@ const NoteState = (props) => {
 
     const getCourses = async () => {
         try {
-            const response = await fetch('http://localhost:3000/api/v1/course', {
+            const response = await fetch(`${url}/api/v1/course`, {
                 method: 'GET',
                 headers: {
                     'Content-Type': 'application/json',
@@ -58,34 +59,6 @@ const NoteState = (props) => {
         }
     };
 
-
-
-    // const getTeachersForCourse = async (selectedCourseId) => {
-    //     const selectedCourse = courses.find(course => course._id === selectedCourseId);
-    //     const teacherDetails = [];
-    //     if (selectedCourse && selectedCourse.teachers) {
-    //         const teacherIds = selectedCourse.teachers;
-    //         teacherIds.map(async (id) => {
-    //             const teacherName = await fetch(`http://localhost:3000/api/v1/teacher/${id}`, {
-    //                 method: 'GET',
-    //                 headers: {
-    //                     'Content-Type': 'application/json',
-    //                 },
-    //             });
-    //             const teacherData = await teacherName.json();
-    //             if (!teacherName.ok) {
-    //                 console.log("error occured")
-    //                 throw new Error(teacherData.error || 'Failed to fetch teacher details');
-    //             }
-    //             teacherDetails.push(teacherData);
-    //         });
-    //         setTeachersForCourse(teacherDetails);
-    //         console.log(teacherDetails);
-    //     } else {
-    //         setTeachersForCourse([]); // Clear if no course is selected
-    //     }
-    // };
-
     const getTeachersForCourse = async (selectedCourseId) => {
         const selectedCourse = courses.find(course => course._id === selectedCourseId);
 
@@ -93,17 +66,15 @@ const NoteState = (props) => {
             const teacherIds = selectedCourse.teachers;
 
             try {
-                // Use Promise.all to fetch all teacher details concurrently
                 const teacherDetails = await Promise.all(
                     teacherIds.map(async (id) => {
-                        const response = await fetch(`http://localhost:3000/api/v1/teacher/${id}`, {
+                        const response = await fetch(`${url}/api/v1/teacher/${id}`, {
                             method: 'GET',
                             headers: {
                                 'Content-Type': 'application/json',
                             },
                         });
 
-                        // Check if the response is ok
                         if (!response.ok) {
                             const errorData = await response.json();
                             console.error("Error occurred while fetching teacher:", errorData.error || 'Failed to fetch teacher details');
@@ -120,11 +91,11 @@ const NoteState = (props) => {
 
                 setTeachersForCourse(teacherDetails);
             } catch (error) {
-                console.error("An error occurred:", error); // Handle any errors that occurred in the fetching process
-                setTeachersForCourse([]); // Clear teachers if there's an error
+                console.error("An error occurred:", error);
+                setTeachersForCourse([]);
             }
         } else {
-            setTeachersForCourse([]); // Clear if no course is selected
+            setTeachersForCourse([]);
         }
     };
 

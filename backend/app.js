@@ -7,7 +7,7 @@ const student = require("./routes/student");
 const teacher = require("./routes/teacher");
 const login = require("./routes/login");
 var cors = require('cors')
-const port = 3000;
+const port = process.env.PORT || 3000;
 app.use(cors())
 
 //middleware
